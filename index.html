@@ -1,46 +1,104 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Pts Motion Lab — 9 situations, 9 moods</title>
+<title>PtsJs Animations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Fraunces:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080a12;--fg:#e9e6df;--dim:#8a8d99}
-@media(prefers-color-scheme:light){:root{--bg:#080a12}}
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 ui-sans-serif,system-ui,sans-serif;overflow:hidden}
-#stage{position:fixed;inset:0}
-#info{position:fixed;left:18px;top:calc(18px + env(safe-area-inset-top,0px));pointer-events:none;mix-blend-mode:difference;color:#fff}
-#info small{letter-spacing:.18em;text-transform:uppercase;opacity:.7;font-size:11px}
-#info h1{margin:2px 0 4px;font:600 26px/1.1 ui-serif,Georgia,serif}
-#info p{margin:0;opacity:.75}
-#wrap{position:fixed;right:14px;top:calc(16px + env(safe-area-inset-top,0px))}#w{width:140px;background:#0008;border:1px solid #fff4;color:#fff;border-radius:99px;padding:8px 14px;font:inherit;backdrop-filter:blur(8px);text-transform:uppercase}
-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
-nav button{flex:none;border:1px solid #fff4;background:#0008;backdrop-filter:blur(8px);color:#fff;padding:8px 12px;border-radius:99px;font:inherit;cursor:pointer;transition:.25s}
-nav button.on{background:#fff;color:#000}
+:root{--ink:#111;--dim:#6b6b73;--acc:#ff4d2e;--line:#e8e6e1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.top{position:fixed;z-index:5;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 0;font:700 14px Syne,sans-serif;pointer-events:none}
+.top span{font:500 13px "Space Grotesk";color:var(--dim)}
+.hero{position:relative;height:100svh;min-height:520px}
+#hero{position:absolute;inset:0;touch-action:pan-y}
+.sub{position:absolute;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--dim);padding:0 20px;pointer-events:none}
+.sub b{display:block;margin-top:14px;color:var(--ink);font-weight:500;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(6px)}}
+main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
+.card{opacity:0;transform:translateY(18px);transition:.6s cubic-bezier(.2,.7,.2,1)}.card.in{opacity:1;transform:none}
+.pv{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;touch-action:pan-y;border:1px solid var(--line)}
+.pv canvas{display:block;width:100%;height:100%}
+.fs{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:8px;border:0;background:#ffffffe0;display:grid;place-items:center;cursor:pointer;transition:.2s;z-index:2}
+.fs:hover{transform:scale(1.08);background:#fff}
+.meta small{display:block;margin:12px 0 2px;color:var(--acc);font:500 11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
+.meta h3{margin:0;font:700 18px Syne,sans-serif}.meta h3 i{font:400 12px "JetBrains Mono";color:var(--dim);margin-right:8px;font-style:normal}
+.meta p{margin:4px 0 10px;color:var(--dim)}
+.vc{border:1px solid var(--ink);background:#fff;border-radius:8px;padding:6px 12px;font:500 13px "Space Grotesk";cursor:pointer;transition:.2s}.vc:hover{background:var(--ink);color:#fff}
+#ov{position:fixed;inset:0;z-index:20;background:#000;display:none}#ov.on{display:block}
+#st{position:absolute;inset:0;touch-action:none}#st canvas{display:block;width:100%;height:100%}
+.bar{position:absolute;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));display:flex;justify-content:space-between;gap:10px;align-items:flex-start;color:#fff;pointer-events:none;z-index:2}
+.bar>*{pointer-events:auto}.bar h2{margin:0;font:700 22px Syne,sans-serif;mix-blend-mode:difference}.bar p{margin:2px 0 0;opacity:.7;font-size:13px;mix-blend-mode:difference}
+.act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.act button,.act input{border:1px solid #fff5;background:#0007;color:#fff;border-radius:8px;padding:8px 12px;font:500 13px "Space Grotesk";backdrop-filter:blur(8px);cursor:pointer}
+.act input{width:130px;text-transform:uppercase;cursor:text}
+#cm{position:fixed;inset:0;z-index:30;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}#cm.on{display:flex}
+.sheet{background:#fff;border-radius:12px;width:min(900px,100%);max-height:86svh;display:flex;flex-direction:column;overflow:hidden}
+.sheet header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font:700 15px Syne}
+.sheet header div{display:flex;gap:8px}.sheet button{border:1px solid var(--ink);background:#fff;border-radius:8px;padding:6px 12px;font:500 13px "Space Grotesk";cursor:pointer}
+.sheet pre{margin:0;padding:16px;overflow:auto;font:12px/1.55 "JetBrains Mono",monospace;background:#fafaf8;tab-size:2}
+footer{text-align:center;padding:30px 20px 50px;color:var(--dim);border-top:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.sub b{animation:none}}
 </style></head><body>
-<div id="stage"></div>
-<div id="info"><small id="use"></small><h1 id="nm"></h1><p id="hint"></p></div>
-<div id="wrap"><input id="w" value="PTS" maxlength="14" placeholder="type a word" autocomplete="off"></div>
-<nav id="nav"></nav>
+<div class="top"><b>PtsJs Animations</b><span id="cnt"></span></div>
+<section class="hero"><div id="hero"></div><div class="sub">Interactive generative art built with <u>Pts</u> — tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
+<main id="grid"></main>
+<footer>Built with <a href="https://github.com/williamngan/pts" style="color:inherit">Pts</a> · MIT-style free to remix</footer>
+<div id="ov"><div id="st"></div><div class="bar"><div><h2 id="on"></h2><p id="oh"></p></div><div class="act"><input id="w" value="PTS" maxlength="12" aria-label="Your word" hidden><button id="oc">View code</button><button id="x">✕ Close</button></div></div></div>
+<div id="cm"><div class="sheet"><header><span id="ct"></span><div><button id="cp">Copy</button><button id="cx">Close</button></div></header><pre id="cc"></pre></div></div>
 <script src="https://cdn.jsdelivr.net/npm/pts@0.10.4/dist/pts.min.js"></script>
-<script src="scenes.js"></script>
-<script src="scenes2.js"></script>
+<script src="scenes.js"></script><script src="scenes2.js"></script><script src="scenes3.js"></script>
 <script>
-window.WORD='PTS';
-const S=new Pts.CanvasSpace('#stage').setup({bgcolor:'#080a12',resize:true,retina:true});
-const F=S.getForm(); if(S.refresh)S.refresh(false);
-window.PTR={x:innerWidth/2,y:innerHeight/2,on:false,click:false,down:false,sp:0,dx:0,dy:0,wh:0};
-const ui=e=>e.target.closest&&e.target.closest('nav,#wrap');
-addEventListener('pointermove',e=>{PTR.on=true;PTR.dx+=e.clientX-PTR.x;PTR.dy+=e.clientY-PTR.y;PTR.sp=Math.min(60,PTR.sp+Math.hypot(e.clientX-PTR.x,e.clientY-PTR.y)*.3);PTR.x=e.clientX;PTR.y=e.clientY});
-addEventListener('pointerdown',e=>{if(ui(e))return;PTR.x=e.clientX;PTR.y=e.clientY;PTR.on=true;PTR.click=true;PTR.down=true});
-addEventListener('pointerup',()=>PTR.down=false);
-addEventListener('wheel',e=>{PTR.wh+=e.deltaY},{passive:true});
 const $=id=>document.getElementById(id);
-let cur=null,ready=false,idx=0;const nav=$('nav');
-SCENES.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+' · '+s.name;b.onclick=()=>go(i);nav.appendChild(b)});
-function go(i){idx=(i+SCENES.length)%SCENES.length;const s=SCENES[idx];cur=s.make(S,F);ready=false;PTR.click=false;
- $('use').textContent=s.use;$('nm').textContent=s.name;$('hint').textContent=s.hint;location.hash=idx+1;
- [...nav.children].forEach((b,j)=>b.classList.toggle('on',j==idx));nav.children[idx].scrollIntoView({inline:'center',block:'nearest'})}
-$('w').oninput=e=>{WORD=(e.target.value.trim()||'PTS').toUpperCase()};
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(idx+1);else if(e.key==='ArrowLeft')go(idx-1);else if(+e.key>0)go(+e.key-1)});
-S.add({animate:(t,dt)=>{if(!cur)return;if(!ready){cur.init();ready=true}cur.frame(t,dt);PTR.click=false;PTR.sp*=.9;PTR.dx=PTR.dy=PTR.wh=0}});
-S.play();go((parseInt(location.hash.slice(1))||1)-1);
+const TEXT=new Set(['Particle Type','Scramble Reveal','Orbit Words','Spiral Scroll','Alphabet Rain']);
+const BG={'Particle Type':'#080a12','Scramble Reveal':'#06090c','Orbit Words':'#070810','Spiral Scroll':'#090a10','Alphabet Rain':'#040806','Signal Lost':'#07080b','Breathing Grid':'#0a0c12'};
+const live=new Set();window.PTR={x:0,y:0,on:false,click:false,down:false,sp:0,dx:0,dy:0,wh:0};window.WORD='PTS';
+function mk(sc,el,word,full){
+ const S=new Pts.CanvasSpace(el).setup({bgcolor:'transparent',resize:true,retina:true}),F=S.getForm();
+ const p={x:el.clientWidth/2,y:el.clientHeight/2,on:false,click:false,down:false,sp:0,dx:0,dy:0,wh:0};
+ const loc=e=>{const r=el.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+ el.addEventListener('pointerenter',e=>{[p.x,p.y]=loc(e);p.on=true});
+ el.addEventListener('pointermove',e=>{const[x,y]=loc(e);p.on=true;p.dx+=x-p.x;p.dy+=y-p.y;p.sp=Math.min(60,p.sp+Math.hypot(x-p.x,y-p.y)*.3);p.x=x;p.y=y});
+ el.addEventListener('pointerleave',()=>{p.on=false;p.down=false});
+ el.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;[p.x,p.y]=loc(e);p.on=true;p.click=true;p.down=true});
+ addEventListener('pointerup',()=>p.down=false);
+ if(full)el.addEventListener('wheel',e=>{p.wh+=e.deltaY},{passive:true});
+ const i={sc,S,p,word,run:true,ready:false,m:sc.make(S,F),el};live.add(i);return i}
+function dispose(i){i.run=false;live.delete(i);i.el.innerHTML=''}
+requestAnimationFrame(function loop(t){requestAnimationFrame(loop);
+ for(const i of live){if(!i.run||!(i.S.size&&i.S.size.x>0))continue;window.PTR=i.p;window.WORD=i.word;
+  try{if(!i.ready){i.m.init();i.ready=true}i.m.frame(t,16)}catch(e){console.error(i.sc.name,e);i.run=false}
+  i.p.click=false;i.p.sp*=.9;i.p.dx=i.p.dy=i.p.wh=0}});
+// hero landing animation
+const hero=(S,F)=>{const c=F.ctx;let P=[],k='',t0=null;
+ return{init(){},frame(t){const W=S.size.x|0,H=S.size.y|0;if(t0===null)t0=t;
+  if(k!==W+'x'+H){k=W+'x'+H;const o=document.createElement('canvas');o.width=W;o.height=H;const x=o.getContext('2d');x.fillStyle='#000';x.textAlign='center';x.textBaseline='middle';
+   x.font=`800 ${Math.min(W*.9/3.3,H*.32)}px Syne,sans-serif`;x.fillText('PtsJs',W/2,H*.40);x.font=`800 ${Math.min(W*.9/6.6,H*.16)}px Syne,sans-serif`;x.fillText('Animations',W/2,H*.64);
+   const d=x.getImageData(0,0,W,H).data,st=W<600?4:5,old=P;P=[];
+   for(let y=0;y<H;y+=st)for(let xx=0;xx<W;xx+=st)if(d[(y*W+xx)*4+3]>128)P.push({hx:xx,hy:y,x:old.length?xx:R(0,W),y:old.length?y:R(-H*.3,H*1.3),vx:0,vy:0,dl:xx/W*900+R(0,500),a:Math.random()<.08})}
+  c.clearRect(0,0,W,H);const e=t-t0,mx=PTR.x,my=PTR.y;
+  for(const p of P){if(e>p.dl){p.vx+=(p.hx-p.x)*.05;p.vy+=(p.hy-p.y)*.05;
+    if(PTR.on){const dx=p.x-mx,dy=p.y-my,d=Math.hypot(dx,dy)||1;if(d<90){const f=(1-d/90)*3;p.vx+=dx/d*f;p.vy+=dy/d*f}}
+    p.vx*=.84;p.vy*=.84;p.x+=p.vx;p.y+=p.vy}else{p.x+=Math.sin(t/300+p.hx)*.4;p.y+=Math.cos(t/350+p.hy)*.4}}
+  c.fillStyle='#111';for(const p of P)if(!p.a)c.fillRect(p.x,p.y,2.2,2.2);c.fillStyle='#ff4d2e';for(const p of P)if(p.a)c.fillRect(p.x,p.y,2.6,2.6)}}};
+// gallery
+const grid=$('grid'),io=new IntersectionObserver(es=>es.forEach(e=>{const n=e.target,i=n._i;
+ if(e.isIntersecting){n.closest('.card').classList.add('in');if(!i||!live.has(i)){n._i=mk(n._sc,n,'PTS')}else i.run=true}else if(i)i.run=false}),{rootMargin:'120px'});
+const fsIcon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+function code(sc){$('ct').textContent=sc.name+' — source';$('cc').textContent=sc.src;$('cm').classList.add('on')}
+let ov=null,cs=null;
+function open(sc){cs=sc;$('on').textContent=sc.name;$('oh').textContent=sc.hint;const w=$('w');w.hidden=!TEXT.has(sc.name);$('ov').classList.add('on');document.body.style.overflow='hidden';
+ $('st').style.background=sc.bg||BG[sc.name]||'#0a0c12';ov=mk(sc,$('st'),(w.value.trim()||'PTS').toUpperCase(),true);history.replaceState(null,'','#'+encodeURIComponent(sc.name))}
+function close(){if(ov){dispose(ov);ov=null}$('ov').classList.remove('on');document.body.style.overflow='';history.replaceState(null,'',location.pathname)}
+$('x').onclick=close;$('oc').onclick=()=>code(cs);$('cx').onclick=()=>$('cm').classList.remove('on');
+$('cp').onclick=async e=>{try{await navigator.clipboard.writeText($('cc').textContent);e.target.textContent='Copied ✓';setTimeout(()=>e.target.textContent='Copy',1400)}catch(_){}};
+$('w').oninput=e=>{if(ov)ov.word=(e.target.value.trim()||'PTS').toUpperCase()};
+addEventListener('keydown',e=>{if(e.key==='Escape'){$('cm').classList.contains('on')?$('cm').classList.remove('on'):close()}});
+SCENES.forEach((s,n)=>{const a=document.createElement('article');a.className='card';
+ a.innerHTML=`<div class="pv" style="background:${s.bg||BG[s.name]||'#0a0c12'}"><button class="fs" aria-label="Full screen">${fsIcon}</button></div><div class="meta"><small>${s.use}</small><h3><i>${String(n+1).padStart(2,'0')}</i>${s.name}</h3><p>${s.hint}</p><button class="vc">View code</button></div>`;
+ const pv=a.querySelector('.pv');pv._sc=s;a.querySelector('.fs').onclick=()=>open(s);a.querySelector('.vc').onclick=()=>code(s);grid.appendChild(a);pv.dataset.n=n});
+$('cnt').textContent=SCENES.length+' animations';
+const fonts=Promise.race([Promise.all(['800 40px Syne','600 40px Fraunces','400 16px "JetBrains Mono"','700 16px "JetBrains Mono"'].map(f=>document.fonts.load(f,'PtsJs Animations 0'))),new Promise(r=>setTimeout(r,2500))]).catch(()=>{});
+fonts.then(()=>{mk({name:'hero',make:hero},$('hero'),'');document.querySelectorAll('.pv').forEach(p=>io.observe(p));
+ const h=decodeURIComponent(location.hash.slice(1)),s=SCENES.find(x=>x.name===h);if(s)open(s)});
 </script></body></html>

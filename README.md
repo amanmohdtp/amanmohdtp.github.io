@@ -1,13 +1,5 @@
-# Pts Motion Lab
-Nine situation-based generative animations built on [Pts](https://github.com/williamngan/pts): hero, cursor, loader, section divider, success state, idle state, 404 and more.
-Static site — no build step.
+# PtsJs Animations
+Gallery of interactive generative animations built on [Pts](https://github.com/williamngan/pts). White landing page, live previews, full-screen play mode, copyable source.
+Static site, no build step: `npx serve .` or push to GitHub Pages / Netlify / Vercel.
 
-## Run
-`npx serve .` (or open `index.html`).
-
-## Deploy
-Push to GitHub → Settings → Pages → deploy from `main` / root. Works on Netlify/Vercel as-is.
-
-## Add a scene
-In `scenes.js`: `add('Name','Where you'd use it','hint',(S,F)=>({init(){},frame(t){ /* draw */ }}))`.
-`PTR` holds pointer x/y and `PTR.click`. Keys 1–9 / arrows switch scenes.
+Add one: `add(name, use, hint, (S,F)=>({init(){}, frame(t){ /* S.size, F.ctx, PTR */ }}))` in a scenes file, or add a preset to `scenes3.js`.
