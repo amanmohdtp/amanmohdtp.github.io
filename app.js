@@ -31,7 +31,7 @@ const hero=(S,F)=>{const c=F.ctx;let P=[],k='',t0=null;
     p.vx*=.84;p.vy*=.84;p.x+=p.vx;p.y+=p.vy}else{p.x+=Math.sin(t/300+p.hx)*.4;p.y+=Math.cos(t/350+p.hy)*.4}}
   c.fillStyle='#111';for(const p of P)if(!p.a)c.fillRect(p.x,p.y,2.2,2.2);c.fillStyle='#ff4d2e';for(const p of P)if(p.a)c.fillRect(p.x,p.y,2.6,2.6)}}};
 // gallery
-const grid=$('grid'),io=new IntersectionObserver(es=>es.forEach(e=>{const n=e.target,i=n._i;
+const gridEl=$('grid'),io=new IntersectionObserver(es=>es.forEach(e=>{const n=e.target,i=n._i;
  if(e.isIntersecting){if(!i||!live.has(i)){try{n._i=mk(n._sc,n,'PTS')}catch(err){console.error(n._sc.name,err);fail('Preview failed: '+err.message)}}else i.run=true}else if(i)i.run=false}),{rootMargin:'120px'});
 const fsIcon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
 function code(sc){$('ct').textContent=sc.name+' — source';$('cc').textContent=sc.src;$('cm').classList.add('on')}
@@ -45,7 +45,7 @@ $('w').oninput=e=>{if(ov)ov.word=(e.target.value.trim()||'PTS').toUpperCase()};
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('cm').classList.contains('on')?$('cm').classList.remove('on'):close()}});
 SCENES.forEach((s,n)=>{const a=document.createElement('article');a.className='card';
  a.innerHTML=`<div class="pv" style="background:${s.bg||BG[s.name]||'#0a0c12'}"><button class="fs" aria-label="Full screen">${fsIcon}</button></div><div class="meta"><small>${s.use}</small><h3><i>${String(n+1).padStart(2,'0')}</i>${s.name}</h3><p>${s.hint}</p><button class="vc">View code</button></div>`;
- const pv=a.querySelector('.pv');pv._sc=s;a.querySelector('.fs').onclick=()=>open(s);a.querySelector('.vc').onclick=()=>code(s);grid.appendChild(a);pv.dataset.n=n});
+ const pv=a.querySelector('.pv');pv._sc=s;a.querySelector('.fs').onclick=()=>open(s);a.querySelector('.vc').onclick=()=>code(s);gridEl.appendChild(a);pv.dataset.n=n});
 $('cnt').textContent=SCENES.length+' animations';
 const fonts=Promise.race([Promise.all(['800 40px Syne','600 40px Fraunces','400 16px "JetBrains Mono"','700 16px "JetBrains Mono"'].map(f=>document.fonts.load(f,'PtsJs Animations 0'))),new Promise(r=>setTimeout(r,2500))]).catch(()=>{});
 document.querySelectorAll('.card').forEach(c=>c.classList.add('in'));document.querySelectorAll('.pv').forEach(p=>io.observe(p));
