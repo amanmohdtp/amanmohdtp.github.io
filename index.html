@@ -2,16 +2,17 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>PtsJs Animations</title>
- <link rel="icon" href="fav.png">
+ <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Fraunces:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#111;--dim:#6b6b73;--acc:#ff4d2e;--line:#e8e6e1}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.top{position:fixed;z-index:5;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 0;font:700 14px Syne,sans-serif;pointer-events:none}
-.top span{font:500 13px "Space Grotesk";color:var(--dim)}
-.hero{position:relative;height:100svh;min-height:520px}
+.top{position:fixed;z-index:5;left:0;right:0;top:0;height:calc(56px + env(safe-area-inset-top,0px));display:flex;align-items:center;padding:env(safe-area-inset-top,0px) 18px 0;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top img{display:block;border-radius:8px}
+.hero{position:relative;height:100svh;min-height:520px;padding-top:56px}
+#hero{top:56px}
 #hero{position:absolute;inset:0;touch-action:pan-y}
 .sub{position:absolute;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--dim);padding:0 20px;pointer-events:none}
 .sub b{display:block;margin-top:14px;color:var(--ink);font-weight:500;animation:bob 1.8s ease-in-out infinite}
@@ -19,7 +20,6 @@ body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",sys
 main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
 .card{opacity:0;transform:translateY(18px);transition:.6s cubic-bezier(.2,.7,.2,1)}.card.in{opacity:1;transform:none}
 .pv{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;touch-action:pan-y;border:1px solid var(--line)}
-.pv canvas{display:block;width:100%;height:100%}
 .fs{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:8px;border:0;background:#ffffffe0;display:grid;place-items:center;cursor:pointer;transition:.2s;z-index:2}
 .fs:hover{transform:scale(1.08);background:#fff}
 .meta small{display:block;margin:12px 0 2px;color:var(--acc);font:500 11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
@@ -27,12 +27,18 @@ main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-tem
 .meta p{margin:4px 0 10px;color:var(--dim)}
 .vc{border:1px solid var(--ink);background:#fff;border-radius:8px;padding:6px 12px;font:500 13px "Space Grotesk";cursor:pointer;transition:.2s}.vc:hover{background:var(--ink);color:#fff}
 #ov{position:fixed;inset:0;z-index:20;background:#000;display:none}#ov.on{display:block}
-#st{position:absolute;inset:0;touch-action:none}#st canvas{display:block;width:100%;height:100%}
+#st{position:absolute;inset:0;touch-action:none}
 .bar{position:absolute;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));display:flex;justify-content:space-between;gap:10px;align-items:flex-start;color:#fff;pointer-events:none;z-index:2}
 .bar>*{pointer-events:auto}.bar h2{margin:0;font:700 22px Syne,sans-serif;mix-blend-mode:difference}.bar p{margin:2px 0 0;opacity:.7;font-size:13px;mix-blend-mode:difference}
 .act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .act button,.act input{border:1px solid #fff5;background:#0007;color:#fff;border-radius:8px;padding:8px 12px;font:500 13px "Space Grotesk";backdrop-filter:blur(8px);cursor:pointer}
-.act input{width:130px;text-transform:uppercase;cursor:text}
+#ed{position:absolute;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#ed[hidden]{display:none}
+#ed label{display:flex;flex-direction:column;gap:4px;color:#fff;font:500 11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.05em;flex:1 1 220px;max-width:520px}
+#ed input{border:1px solid #fff5;background:#000a;color:#fff;border-radius:8px;padding:10px 12px;font:500 15px "Space Grotesk",sans-serif;backdrop-filter:blur(8px);text-transform:none;outline:none}
+#ed input:focus{border-color:#fff}
+.perr{position:absolute;left:8px;right:8px;bottom:8px;color:#ffb4a6;font:11px/1.3 "JetBrains Mono",monospace;background:#000a;padding:6px 8px;border-radius:6px}
+.pv canvas{pointer-events:none;user-select:none}
 #cm{position:fixed;inset:0;z-index:30;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}#cm.on{display:flex}
 .sheet{background:#fff;border-radius:12px;width:min(900px,100%);max-height:86svh;display:flex;flex-direction:column;overflow:hidden}
 .sheet header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font:700 15px Syne}
@@ -41,21 +47,21 @@ main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-tem
 footer{text-align:center;padding:30px 20px 50px;color:var(--dim);border-top:1px solid var(--line)}
 @media(prefers-reduced-motion:reduce){.card{transition:none}.sub b{animation:none}}
 </style></head><body>
-<div class="top"><b>PtsJs Animations</b><span id="cnt"></span></div>
-<section class="hero"><div id="hero"></div><div class="sub">Interactive generative art built with <u>Pts</u> — tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
+<header class="top"><img src="logo.png" alt="PtsJs Animations" width="34" height="34"></header>
+<section class="hero"><div id="hero"></div><div class="sub">Interactive generative art built with <u>Pts</u>, tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
 <main id="grid"></main>
 <footer>Built with <a href="https://github.com/williamngan/pts" style="color:inherit">Pts</a> · MIT-style free to remix</footer>
-<div id="ov"><div id="st"></div><div class="bar"><div><h2 id="on"></h2><p id="oh"></p></div><div class="act"><input id="w" value="PTS" maxlength="12" aria-label="Your word" hidden><button id="oc">View code</button><button id="x">✕ Close</button></div></div></div>
+<div id="ov"><div id="st"></div><div class="bar"><div><h2 id="on"></h2><p id="oh"></p></div><div class="act"><button id="oc">View code</button><button id="x">✕ Close</button></div></div><div id="ed" hidden></div></div>
 <div id="cm"><div class="sheet"><header><span id="ct"></span><div><button id="cp">Copy</button><button id="cx">Close</button></div></header><pre id="cc"></pre></div></div>
 <div id="err" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#fff3f0;border:1px solid #ff4d2e;color:#7a1d0e;border-radius:10px;padding:12px 14px;font:13px/1.45 ui-monospace,monospace"></div>
 <script>
 function fail(m){const e=document.getElementById('err');e.style.display='block';e.textContent=m}
 addEventListener('error',e=>{if(e.message)fail('Script error: '+e.message)});
 function load(u,ok,bad){const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=bad;document.head.appendChild(s)}
-function chain(list,done){const u=list.shift();if(!u)return fail('Could not load a required file. Check that index.html, scenes.js, scenes2.js, scenes3.js and app.js are all in the SAME folder of your repo (the Pages root).');
+function chain(list,done){const u=list.shift();if(!u){console.warn('Pts CDN unavailable, using built-in fallback');return done(true)}
  load(u,done,()=>{console.warn('failed',u);chain(list,done)})}
 const PTS=['https://cdn.jsdelivr.net/npm/pts@0.12.9/dist/pts.min.js','https://unpkg.com/pts@0.12.9/dist/pts.min.js','https://cdn.jsdelivr.net/npm/pts/dist/pts.min.js','https://unpkg.com/pts/dist/pts.min.js'];
-chain(PTS,()=>{if(!window.Pts||!Pts.CanvasSpace)return fail('Pts loaded but CanvasSpace is missing.');
- const files=['scenes.js','scenes2.js','scenes3.js','app.js'];
- (function next(){const f=files.shift();if(!f)return;load(f+'?v=3',next,()=>fail('Missing file: '+f+' — upload it next to index.html.'))})()});
+chain(PTS,()=>{
+ const files=['scenes.js','scenes2.js','scenes3.js','scenes4.js','app.js'];
+ (function next(){const f=files.shift();if(!f)return;load(f+'?v=4',next,()=>fail('Missing file: '+f+', upload it next to index.html.'))})()});
 </script></body></html>

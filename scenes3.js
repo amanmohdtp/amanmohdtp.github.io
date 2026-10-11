@@ -1,8 +1,4 @@
 // Generative engines + presets. Each engine: (space, form, params) -> {init, frame}
-const A=(t,W,H)=>PTR.on?PTR:{x:W/2+Math.sin(t/1100)*W*.32,y:H/2+Math.cos(t/900)*H*.28};
-const K=S=>Math.min(1,S.size.x*S.size.y/650000);
-const pal=(h,s,l,a=1)=>`hsla(${h%360},${s}%,${l}%,${a})`;
-const rgb=o=>`rgb(${o.bg})`;
 
 function flow(S,F,o){const c=F.ctx;let P=[];
  const f={curl:(x,y,t)=>(Math.sin(x*.004+t*3e-4)+Math.cos(y*.005-t*2e-4))*Math.PI,
@@ -120,7 +116,7 @@ const reg=(g,E,name,use,hint,o)=>G[g].push([name,use,hint,E,o]);
  ['Lantern Moths','Atmospheric hero','Moths drift toward your light',{m:'moth',n:160,r:2.5,h:45,hr:20,sat:100,l:68,bg:'4,5,10',fade:.15,add:1}],
  ['Swarm Halo','Loader / AI thinking','A crown of light follows you',{m:'halo',n:300,r:3,h:280,hr:90,sat:90,l:68,bg:'8,4,16',fade:.2,add:1}],
  ['Comet Tail','Cursor trail','Long glowing tails',{m:'spark',n:500,r:2.2,h:200,hr:20,sat:90,l:68,bg:'3,4,10',fade:.04,add:1}]].forEach(a=>reg('parts',parts,...a));
-[[kal,'Kaleidoscope','Drawing tool / hero','Draw — eight mirrors paint with you',{n:8,w:1.5,h:200,fade:.04,bg:'6,6,12'}],
+[[kal,'Kaleidoscope','Drawing tool / hero','Draw, eight mirrors paint with you',{n:8,w:1.5,h:200,fade:.04,bg:'6,6,12'}],
  [kal,'Snowflake','Winter campaign','Six-fold symmetry, drag to draw',{n:6,w:1.2,h:195,fade:.05,bg:'4,8,16'}],
  [kal,'Mandala','Spiritual / art brand','Fourteen petals of light',{n:14,w:1,h:320,fade:.03,bg:'10,4,12'}],
  [spiro,'Spirograph','Toy / education','Pointer changes the gears',{a:.31,b:.4,turns:30,w:1.1,h:40,bg:'8,8,12'}],
