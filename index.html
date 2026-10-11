@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pts Motion Lab — 9 situations, 9 moods</title>
+<style>
+:root{--bg:#080a12;--fg:#e9e6df;--dim:#8a8d99}
+@media(prefers-color-scheme:light){:root{--bg:#080a12}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 ui-sans-serif,system-ui,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+#info{position:fixed;left:18px;top:calc(18px + env(safe-area-inset-top,0px));pointer-events:none;mix-blend-mode:difference;color:#fff}
+#info small{letter-spacing:.18em;text-transform:uppercase;opacity:.7;font-size:11px}
+#info h1{margin:2px 0 4px;font:600 26px/1.1 ui-serif,Georgia,serif}
+#info p{margin:0;opacity:.75}
+#wrap{position:fixed;right:14px;top:calc(16px + env(safe-area-inset-top,0px))}#w{width:140px;background:#0008;border:1px solid #fff4;color:#fff;border-radius:99px;padding:8px 14px;font:inherit;backdrop-filter:blur(8px);text-transform:uppercase}
+nav{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+nav button{flex:none;border:1px solid #fff4;background:#0008;backdrop-filter:blur(8px);color:#fff;padding:8px 12px;border-radius:99px;font:inherit;cursor:pointer;transition:.25s}
+nav button.on{background:#fff;color:#000}
+</style></head><body>
+<div id="stage"></div>
+<div id="info"><small id="use"></small><h1 id="nm"></h1><p id="hint"></p></div>
+<div id="wrap"><input id="w" value="PTS" maxlength="14" placeholder="type a word" autocomplete="off"></div>
+<nav id="nav"></nav>
+<script src="https://cdn.jsdelivr.net/npm/pts@0.10.4/dist/pts.min.js"></script>
+<script src="scenes.js"></script>
+<script src="scenes2.js"></script>
+<script>
+window.WORD='PTS';
+const S=new Pts.CanvasSpace('#stage').setup({bgcolor:'#080a12',resize:true,retina:true});
+const F=S.getForm(); if(S.refresh)S.refresh(false);
+window.PTR={x:innerWidth/2,y:innerHeight/2,on:false,click:false,down:false,sp:0,dx:0,dy:0,wh:0};
+const ui=e=>e.target.closest&&e.target.closest('nav,#wrap');
+addEventListener('pointermove',e=>{PTR.on=true;PTR.dx+=e.clientX-PTR.x;PTR.dy+=e.clientY-PTR.y;PTR.sp=Math.min(60,PTR.sp+Math.hypot(e.clientX-PTR.x,e.clientY-PTR.y)*.3);PTR.x=e.clientX;PTR.y=e.clientY});
+addEventListener('pointerdown',e=>{if(ui(e))return;PTR.x=e.clientX;PTR.y=e.clientY;PTR.on=true;PTR.click=true;PTR.down=true});
+addEventListener('pointerup',()=>PTR.down=false);
+addEventListener('wheel',e=>{PTR.wh+=e.deltaY},{passive:true});
+const $=id=>document.getElementById(id);
+let cur=null,ready=false,idx=0;const nav=$('nav');
+SCENES.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+' · '+s.name;b.onclick=()=>go(i);nav.appendChild(b)});
+function go(i){idx=(i+SCENES.length)%SCENES.length;const s=SCENES[idx];cur=s.make(S,F);ready=false;PTR.click=false;
+ $('use').textContent=s.use;$('nm').textContent=s.name;$('hint').textContent=s.hint;location.hash=idx+1;
+ [...nav.children].forEach((b,j)=>b.classList.toggle('on',j==idx));nav.children[idx].scrollIntoView({inline:'center',block:'nearest'})}
+$('w').oninput=e=>{WORD=(e.target.value.trim()||'PTS').toUpperCase()};
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(idx+1);else if(e.key==='ArrowLeft')go(idx-1);else if(+e.key>0)go(+e.key-1)});
+S.add({animate:(t,dt)=>{if(!cur)return;if(!ready){cur.init();ready=true}cur.frame(t,dt);PTR.click=false;PTR.sp*=.9;PTR.dx=PTR.dy=PTR.wh=0}});
+S.play();go((parseInt(location.hash.slice(1))||1)-1);
+</script></body></html>
