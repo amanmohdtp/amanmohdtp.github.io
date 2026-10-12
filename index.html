@@ -4,20 +4,28 @@
 <title>PtsJs Animations</title>
  <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Fraunces:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Fraunces:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600&family=Anton&family=Caveat:wght@700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#111;--dim:#6b6b73;--acc:#ff4d2e;--line:#e8e6e1}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .top{position:fixed;z-index:5;left:0;right:0;top:0;height:calc(56px + env(safe-area-inset-top,0px));display:flex;align-items:center;padding:env(safe-area-inset-top,0px) 18px 0;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top img{display:block;border-radius:8px}
+.top{justify-content:space-between;gap:12px}.top img{display:block;border-radius:8px}
+.sr{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:0 12px;height:38px;background:#fff;width:min(320px,62vw)}
+.sr input{border:0;outline:0;background:transparent;font:500 14px "Space Grotesk",sans-serif;width:100%;color:var(--ink)}
+#gallery{scroll-margin-top:70px}
+.pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 20px 70px}
+.pager button{min-width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:8px;font:500 14px "Space Grotesk",sans-serif;cursor:pointer;padding:0 12px}
+.pager button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pager button:disabled{opacity:.35;cursor:default}
+.none{grid-column:1/-1;text-align:center;color:var(--dim);padding:60px 0}
 .hero{position:relative;height:100svh;min-height:520px;padding-top:56px}
 #hero{top:56px}
 #hero{position:absolute;inset:0;touch-action:pan-y}
 .sub{position:absolute;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--dim);padding:0 20px;pointer-events:none}
 .sub b{display:block;margin-top:14px;color:var(--ink);font-weight:500;animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(6px)}}
-main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
+main{max-width:1240px;margin:0 auto;padding:40px 20px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
 .card{opacity:0;transform:translateY(18px);transition:.6s cubic-bezier(.2,.7,.2,1)}.card.in{opacity:1;transform:none}
 .pv{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;touch-action:pan-y;border:1px solid var(--line)}
 .fs{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:8px;border:0;background:#ffffffe0;display:grid;place-items:center;cursor:pointer;transition:.2s;z-index:2}
@@ -47,9 +55,11 @@ main{max-width:1240px;margin:0 auto;padding:40px 20px 80px;display:grid;grid-tem
 footer{text-align:center;padding:30px 20px 50px;color:var(--dim);border-top:1px solid var(--line)}
 @media(prefers-reduced-motion:reduce){.card{transition:none}.sub b{animation:none}}
 </style></head><body>
-<header class="top"><img src="logo.png" alt="PtsJs Animations" width="34" height="34"></header>
+<header class="top"><img src="logo.png" alt="PtsJs Animations" width="34" height="34"><label class="sr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6b73" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search animations" autocomplete="off" aria-label="Search animations"></label></header>
 <section class="hero"><div id="hero"></div><div class="sub">Interactive generative art built with <u>Pts</u>, tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
+<div id="gallery"></div>
 <main id="grid"></main>
+<nav id="pager" class="pager" aria-label="Pages"></nav>
 <footer>Built with <a href="https://github.com/williamngan/pts" style="color:inherit">Pts</a> · MIT-style free to remix</footer>
 <div id="ov"><div id="st"></div><div class="bar"><div><h2 id="on"></h2><p id="oh"></p></div><div class="act"><button id="oc">View code</button><button id="x">✕ Close</button></div></div><div id="ed" hidden></div></div>
 <div id="cm"><div class="sheet"><header><span id="ct"></span><div><button id="cp">Copy</button><button id="cx">Close</button></div></header><pre id="cc"></pre></div></div>
@@ -61,7 +71,13 @@ function load(u,ok,bad){const s=document.createElement('script');s.src=u;s.onloa
 function chain(list,done){const u=list.shift();if(!u){console.warn('Pts CDN unavailable, using built-in fallback');return done(true)}
  load(u,done,()=>{console.warn('failed',u);chain(list,done)})}
 const PTS=['https://cdn.jsdelivr.net/npm/pts@0.12.9/dist/pts.min.js','https://unpkg.com/pts@0.12.9/dist/pts.min.js','https://cdn.jsdelivr.net/npm/pts/dist/pts.min.js','https://unpkg.com/pts/dist/pts.min.js'];
+// Cache version: bump this number after you deploy changes so visitors get the newest files.
+const V=6;
+// Loads scenes.js, then scenes1.js, scenes2.js, scenes3.js ... automatically (any number), then app.js.
+// Gaps of up to 2 missing numbers are tolerated, so deleting a file never breaks the page.
 chain(PTS,()=>{
- const files=['scenes.js','scenes2.js','scenes3.js','scenes4.js','app.js'];
- (function next(){const f=files.shift();if(!f)return;load(f+'?v=4',next,()=>fail('Missing file: '+f+', upload it next to index.html.'))})()});
+ load('scenes.js?v='+V,()=>{let n=1,miss=0;
+  (function next(){if(miss>=3)return load('app.js?v='+V,()=>{},()=>fail('Missing file: app.js, upload it next to index.html.'));
+   load('scenes'+n+'.js?v='+V,()=>{miss=0;n++;next()},()=>{miss++;n++;next()})})()},
+  ()=>fail('Missing file: scenes.js, upload it next to index.html.'))});
 </script></body></html>
