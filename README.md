@@ -26,29 +26,6 @@ A growing gallery of interactive and cinematic web animations, built with [Pts](
 
 Every card says where the piece fits in a real website: hero background, loading screen, 404 page, intro, footer and more.
 
-## Good to know
-
-- Previews play on their own. Interaction is only enabled in full screen, so scrolling on a phone never gets stuck.
-- Works on desktop and mobile. Animations pause when they are off screen to stay smooth.
-- Emoji pieces use your device's own emoji, so they look like Apple emoji on iPhone and Mac.
-- Fonts (Syne, Fraunces, JetBrains Mono, Anton, Caveat, Fredoka) come from Google Fonts.
-
-## Project layout
-
-- `index.html` and `app.js`: the gallery (search, pages, full screen, code viewer).
-- `core.js`: shared helpers.
-- `scenes1.js` to `scenes10.js`: the animations, grouped by theme. Add `scenes11.js`, `scenes12.js` and so on and they load automatically.
-- `cat.png`: the picture used by the cat animations. Replace it with your own image.
-
-## Run it yourself
-
-No build step. Serve the folder (opening `index.html` directly will block the image pieces):
-
-```
-npx serve .
-```
-
-To host it free, push the files to a GitHub repository and turn on **Settings, Pages, Deploy from branch, main, root**.
 
 ## Credits
 
