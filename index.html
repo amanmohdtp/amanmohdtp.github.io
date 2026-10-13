@@ -9,7 +9,7 @@
 :root{--ink:#111;--dim:#6b6b73;--acc:#ff4d2e;--line:#e8e6e1}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.top{position:fixed;z-index:5;left:0;right:0;top:0;height:calc(56px + env(safe-area-inset-top,0px));display:flex;align-items:center;padding:env(safe-area-inset-top,0px) 18px 0;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top{position:fixed;z-index:5;left:0;right:0;top:0;height:calc(56px + env(safe-area-inset-top,0px));display:flex;align-items:center;padding:env(safe-area-inset-top,0px) 18px 0;background:#fff;border-bottom:1px solid var(--line)}
 .top{justify-content:space-between;gap:12px}.top img{display:block;border-radius:8px}
 .sr{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:0 12px;height:38px;background:#fff;width:min(320px,62vw)}
 .sr input{border:0;outline:0;background:transparent;font:500 14px "Space Grotesk",sans-serif;width:100%;color:var(--ink)}
@@ -19,15 +19,24 @@ body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 "Space Grotesk",sys
 .pager button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .pager button:disabled{opacity:.35;cursor:default}
 .none{grid-column:1/-1;text-align:center;color:var(--dim);padding:60px 0}
-.hero{position:relative;height:100svh;min-height:520px;padding-top:56px}
-#hero{top:56px}
-#hero{position:absolute;inset:0;touch-action:pan-y}
+
+.hero{position:relative;height:100svh;min-height:520px;display:grid;place-items:center;overflow:hidden;padding-top:56px}
+.orb{position:absolute;border-radius:50%;width:46vmax;height:46vmax;background:radial-gradient(circle,var(--c) 0%,transparent 68%);opacity:.7;will-change:transform;animation:drift var(--d) ease-in-out infinite alternate}
+.o1{--c:#ffd6c9;left:-12vmax;top:-10vmax;--d:22s}.o2{--c:#d3e2ff;right:-14vmax;top:4vmax;--d:28s}.o3{--c:#d6f3e3;left:14vw;bottom:-20vmax;--d:25s}.o4{--c:#ffe7b0;right:8vw;bottom:-12vmax;--d:31s;width:34vmax;height:34vmax}
+@keyframes drift{to{transform:translate3d(7vmax,5vmax,0) scale(1.15)}}
+.hero.off .orb{animation-play-state:paused}
+.ht{position:relative;margin:0;text-align:center;font:800 clamp(54px,15vw,170px)/.95 Syne,sans-serif;letter-spacing:-.03em;padding:0 16px}
+.ht b{display:block;font-weight:800}.ht .l2{font-size:.44em;letter-spacing:-.02em;margin-top:.14em}
+.ht i{font-style:normal;display:inline-block;opacity:0;transform:translate3d(0,.5em,0);animation:up .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i)*60ms + 150ms)}
+.ht .a{color:var(--acc)}
+@keyframes up{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.orb{animation:none}.ht i{animation:none;opacity:1;transform:none}}
 .sub{position:absolute;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--dim);padding:0 20px;pointer-events:none}
 .sub b{display:block;margin-top:14px;color:var(--ink);font-weight:500;animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(6px)}}
 main{max-width:1240px;margin:0 auto;padding:40px 20px 50px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
-.card{opacity:0;transform:translateY(18px);transition:.6s cubic-bezier(.2,.7,.2,1)}.card.in{opacity:1;transform:none}
-.pv{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;touch-action:pan-y;border:1px solid var(--line)}
+
+.pv{contain:layout paint;position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;touch-action:pan-y;border:1px solid var(--line)}
 .fs{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:8px;border:0;background:#ffffffe0;display:grid;place-items:center;cursor:pointer;transition:.2s;z-index:2}
 .fs:hover{transform:scale(1.08);background:#fff}
 .meta small{display:block;margin:12px 0 2px;color:var(--acc);font:500 11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
@@ -56,7 +65,7 @@ footer{text-align:center;padding:30px 20px 50px;color:var(--dim);border-top:1px 
 @media(prefers-reduced-motion:reduce){.card{transition:none}.sub b{animation:none}}
 </style></head><body>
 <header class="top"><img src="logo.png" alt="PtsJs Animations" width="34" height="34"><label class="sr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6b73" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search animations" autocomplete="off" aria-label="Search animations"></label></header>
-<section class="hero"><div id="hero"></div><div class="sub">Interactive generative art built with <u>Pts</u>, tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
+<section class="hero" id="hero"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><span class="orb o4"></span><h1 class="ht" aria-label="PtsJs Animations"><b aria-hidden="true"><i style="--i:0">P</i><i style="--i:1">t</i><i style="--i:2">s</i><i class="a" style="--i:3">J</i><i class="a" style="--i:4">s</i></b><b class="l2" aria-hidden="true"><i style="--i:6">A</i><i style="--i:7">n</i><i style="--i:8">i</i><i style="--i:9">m</i><i style="--i:10">a</i><i style="--i:11">t</i><i style="--i:12">i</i><i style="--i:13">o</i><i style="--i:14">n</i><i style="--i:15">s</i></b></h1><div class="sub">Interactive generative art built with <u>Pts</u>, tap any piece to play, then take the code.<b>Scroll ↓</b></div></section>
 <div id="gallery"></div>
 <main id="grid"></main>
 <nav id="pager" class="pager" aria-label="Pages"></nav>
@@ -72,12 +81,12 @@ function chain(list,done){const u=list.shift();if(!u){console.warn('Pts CDN unav
  load(u,done,()=>{console.warn('failed',u);chain(list,done)})}
 const PTS=['https://cdn.jsdelivr.net/npm/pts@0.12.9/dist/pts.min.js','https://unpkg.com/pts@0.12.9/dist/pts.min.js','https://cdn.jsdelivr.net/npm/pts/dist/pts.min.js','https://unpkg.com/pts/dist/pts.min.js'];
 // Cache version: bump this number after you deploy changes so visitors get the newest files.
-const V=6;
-// Loads scenes.js, then scenes1.js, scenes2.js, scenes3.js ... automatically (any number), then app.js.
+const V=7;
+// Loads core.js, then scenes1.js, scenes2.js, scenes3.js ... automatically (any number), then app.js.
 // Gaps of up to 2 missing numbers are tolerated, so deleting a file never breaks the page.
 chain(PTS,()=>{
- load('scenes.js?v='+V,()=>{let n=1,miss=0;
+ load('core.js?v='+V,()=>{let n=1,miss=0;
   (function next(){if(miss>=3)return load('app.js?v='+V,()=>{},()=>fail('Missing file: app.js, upload it next to index.html.'));
    load('scenes'+n+'.js?v='+V,()=>{miss=0;n++;next()},()=>{miss++;n++;next()})})()},
-  ()=>fail('Missing file: scenes.js, upload it next to index.html.'))});
+  ()=>fail('Missing file: core.js, upload it next to index.html.'))});
 </script></body></html>

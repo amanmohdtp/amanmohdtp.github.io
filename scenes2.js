@@ -1,42 +1,55 @@
-// Text scenes. Every text is editable in full screen (see TEXTS).
-function textPts(str,W,H,step){const o=document.createElement('canvas');o.width=W;o.height=H;const c=o.getContext('2d');
- const s=fitS(c,str,x=>`800 ${x}px ${FONT}`,W*.88,H*.5);c.font=`800 ${s}px ${FONT}`;c.textAlign='center';c.textBaseline='middle';c.fillText(str,W/2,H/2);
- const d=c.getImageData(0,0,W,H).data,P=[];for(let y=0;y<H;y+=step)for(let x=0;x<W;x+=step)if(d[(y*W+x)*4+3]>128)P.push(new Pt(x,y));return P}
+// Typography styles. One scene per block. Add yours the same way.
 
-TEXTS['Particle Type']=[{k:'word',label:'Text',v:'PTS'}];
-add('Particle Type','Headline that reacts to touch','Push the letters, hold to pull them in',(S,F)=>{const st={},c=F.ctx;
- return{init(){},frame(t){const W=S.size.x|0,H=S.size.y|0,m=A(t,W,H),w=TX.word||' ',step=Math.max(4,Math.round(W/110)),k=w+W+H;
-  if(st.k!==k){st.k=k;const T=textPts(w,W,H,step),o=st.P||[];st.P=T.map((h,i)=>({h,p:o[i]?o[i].p:new Pt(R(0,W),R(0,H)),v:o[i]?o[i].v:new Pt(0,0)}))}
-  wash(c,'8,10,18',.28,W,H);const mp=new Pt(m.x,m.y),rad=Math.max(70,W*.12);
-  for(const q of st.P){const d=q.p.$subtract(mp),l=d.magnitude();if(l<rad)q.v.add(d.multiply((1-l/rad)*(PTR.down?-1.1:1.4)/(l||1)));
-   q.v.add(q.h.$subtract(q.p).multiply(.045)).multiply(.87);q.p.add(q.v);const sp=q.v.magnitude();
-   c.fillStyle=`hsl(${190+sp*14},90%,${60+sp*4}%)`;c.fillRect(q.p.x,q.p.y,step*.4,step*.4)}}}});
+T1('Depth Extrude','Text','DEPTH');
+sc4('Depth Extrude','Bold headline','The block leans toward your pointer','#101014',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=TX.word||' ',s=fitS(c,w,x=>fnt(800,x),W*.78,H*.45),dx=(m.x-W/2)/W,dy=(m.y-H/2)/H;
+  paint(c,'16,16,20',W,H);c.font=fnt(800,s);ctr(c);
+  for(let i=26;i>0;i--){c.fillStyle=`hsl(${12+i*1.5},80%,${58-i*1.2}%)`;c.fillText(w,W/2-dx*i*s*.03,H/2-dy*i*s*.03)}
+  c.fillStyle='#fff3e6';c.fillText(w,W/2,H/2)}}});
 
-TEXTS['Scramble Reveal']=[{k:'word',label:'Main text',v:'DECODE'},{k:'msg',label:'Status line',v:'> decoding message'}];
-add('Scramble Reveal','Loading text / hover headline','Hover re-scrambles, click replays',(S,F)=>{let t0=0,k='';const c=F.ctx,G='!<>-_\\/[]{}=+*^?#ABCXYZ0123456789';
- return{init(){},frame(t){const W=S.size.x,H=S.size.y,w=TX.word||' ';if(k!==w||PTR.click||(!PTR.on&&t-t0>6000)){k=w;t0=t}paint(c,'6,9,12',W,H);
-  const s=fitS(c,w,x=>`700 ${x}px ${MONO}`,W*.9,H*.3);c.font=`700 ${s}px ${MONO}`;c.textAlign='center';c.textBaseline='middle';const cw=c.measureText('M').width,x0=W/2-cw*w.length/2;
-  [...w].forEach((ch,i)=>{const x=x0+cw*(i+.5),near=PTR.on&&Math.hypot(x-PTR.x,H/2-PTR.y)<cw*.8,done=(t-t0)>300+i*140&&!near;c.fillStyle=done?'#8dffb4':'#2a7a4a';c.fillText(done||ch===' '?ch:G[(Math.random()*G.length)|0],x,H/2)});
-  const msg=TX.msg||'',ms=fitS(c,msg,x=>`${x}px ${MONO}`,W*.9,14);c.font=`${ms}px ${MONO}`;c.fillStyle='#4a6';c.fillText(msg,W/2,H/2+s*.8)}}});
+T1('Neon Sign','Text','OPEN');
+sc4('Neon Sign','Shop / bar / night brand','Flickers on its own, click to short it out','#0c0810',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=TX.word||' ',s=fitS(c,w,x=>fnt(800,x),W*.78,H*.4),hue=300+m.x/W*80;
+  const fl=(Math.sin(t*.037)*Math.sin(t*.0113)>.93||PTR.click)?.25:1;paint(c,'12,8,16',W,H);c.font=fnt(800,s);ctr(c);c.lineJoin='round';
+  c.strokeStyle='rgba(255,255,255,.07)';c.lineWidth=s*.03;c.strokeText(w,W/2,H/2);
+  c.shadowColor=pal(hue,100,60);c.shadowBlur=34*fl;c.strokeStyle=pal(hue,100,66,fl);c.lineWidth=s*.045;c.strokeText(w,W/2,H/2);
+  c.shadowBlur=8*fl;c.strokeStyle=`rgba(255,255,255,${.95*fl})`;c.lineWidth=s*.016;c.strokeText(w,W/2,H/2);c.shadowBlur=0}}});
 
-TEXTS['Orbit Words']=[{k:'word',label:'Center text',v:'PTS'},{k:'words',label:'Orbiting words (comma separated)',v:'design, motion, code, noise, light, play, craft, space, rhythm, form, color, signal'}];
-add('Orbit Words','About / skills section','Pointer speed spins them, hover enlarges',(S,F)=>{let a=0;const c=F.ctx;
- return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),ws=(TX.words||'').split(',').map(x=>x.trim()).filter(Boolean),w=TX.word||'',u=Math.max(.7,Math.min(W,H)/420);
-  a+=.003+PTR.sp*.0016;wash(c,'7,8,14',.3,W,H);c.textAlign='center';c.textBaseline='middle';
-  const cs=fitS(c,w,x=>`800 ${x}px ${SERIF}`,W*.36,H*.3);c.font=`800 ${cs}px ${SERIF}`;c.fillStyle='#fff';c.fillText(w,W/2,H/2);
-  ws.forEach((x,i)=>{const k=i/ws.length*TAU+a*(1+(i%3)*.4),rx=W*.2+(i%3)*W*.07,ry=H*.15+(i%3)*H*.06,px=W/2+Math.cos(k)*rx,py=H/2+Math.sin(k)*ry,hov=Math.hypot(px-m.x,py-m.y)<60*u,z=.6+.4*Math.sin(k);
-   c.font=`${((hov?30:16)*z+8)*u}px ${SERIF}`;c.fillStyle=`hsla(${i*30},80%,${hov?85:65}%,${.4+z*.6})`;c.fillText(x,px,py)})}}});
+T1('Dot Matrix Ticker','Text','HELLO FROM PTS');
+sc4('Dot Matrix Ticker','News bar / announcement','An LED board scrolling your text','#0a0806',(S,F)=>{const c=F.ctx,rows=11;let ck='',D=null,mw=0;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,w=(TX.word||' ').toUpperCase();
+  if(ck!==w){ck=w;c.font=fnt(700,rows,MONO);mw=Math.ceil(c.measureText(w).width)+2;const o=document.createElement('canvas');o.width=mw;o.height=rows;const x=o.getContext('2d');x.font=fnt(700,rows,MONO);x.textBaseline='middle';x.fillStyle='#fff';x.fillText(w,1,rows/2+.5);D=x.getImageData(0,0,mw,rows).data}
+  const g=Math.max(5,Math.floor(Math.min(H*.7/rows,W/56))),cols=Math.ceil(W/g)+1,tot=mw+14,off=Math.floor(t*.018),y0=(H-rows*g)/2;paint(c,'10,8,6',W,H);
+  for(let i=0;i<cols;i++){const sc=(i+off)%tot;for(let r=0;r<rows;r++){const lit=sc<mw&&D[(r*mw+sc)*4+3]>110;c.fillStyle=lit?'#ffb02e':'rgba(255,170,40,.07)';c.beginPath();c.arc(i*g+g/2,y0+r*g+g/2,g*.36,0,TAU);c.fill()}}}}});
 
-TEXTS['Spiral Scroll']=[{k:'phrase',label:'Text',v:'PTS'}];
-add('Spiral Scroll','Scroll-driven storytelling','Scroll the wheel or drag to spin the text galaxy',(S,F)=>{let rot=0,vel=0;const c=F.ctx;
- return{init(){},frame(t){const W=S.size.x,H=S.size.y,u=Math.min(W,H)/520;vel+=PTR.wh*.00006+(PTR.down?PTR.dx*.0012:0);vel*=.95;rot+=vel+.002;paint(c,'9,10,16',W,H);
-  const ph=(TX.phrase||' ').trim()||' ',str=(ph+' . ').repeat(Math.ceil(400/(ph.length+3))),cx=W/2,cy=H/2;c.textAlign='center';c.textBaseline='middle';
-  for(let i=0;i<str.length;i++){const a=i*.21+rot*6,r=(14+i*1.15*u*1)*1;if(r>Math.hypot(W,H)/1.6)break;
-   c.save();c.translate(cx+Math.cos(a)*r,cy+Math.sin(a)*r);c.rotate(a+Math.PI/2);c.font=`700 ${(10+r*.07)}px ${FONT}`;c.fillStyle=`hsla(${(i*3+rot*200)%360},75%,70%,${Math.max(.15,1-r/Math.min(W,H))})`;c.fillText(str[i],0,0);c.restore()}}}});
+T1('Type Tunnel','Text','GO');
+sc4('Type Tunnel','Intro / transition','Fly through your word, steer with the pointer','#06060c',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=TX.word||' ',mx=fitS(c,w,x=>fnt(800,x),W*1.3,H*1.2),ph=(t*4e-4)%1,N=14;paint(c,'6,6,12',W,H);ctr(c);
+  for(let i=0;i<N;i++){const z=(i+ph)/N;c.font=fnt(800,Math.max(4,Math.pow(z,2.4)*mx));c.strokeStyle=pal(180+i*14,80,62,Math.min(1,z*1.4));c.lineWidth=1+z*2;
+   c.save();c.translate(W/2+(m.x-W/2)*(1-z)*.5,H/2+(m.y-H/2)*(1-z)*.5);c.rotate(Math.sin(t/2000)*.08*(1-z));c.strokeText(w,0,0);c.restore()}}}});
 
-TEXTS['Alphabet Rain']=[{k:'word',label:'Text',v:'PTS'}];
-add('Alphabet Rain','Tech / terminal intro','Columns spell your text where the pointer touches',(S,F)=>{let Y=[];const c=F.ctx;
- return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),n=Math.ceil(W/18),w=TX.word||'?';wash(c,'4,8,6',.12,W,H);c.font=`16px ${MONO}`;c.textAlign='center';
-  while(Y.length<n)Y.push(R(-H,0));
-  for(let i=0;i<n;i++){const x=i*18+9,near=Math.abs(x-m.x)<60,ch=near?w[(Y[i]/18|0)%w.length]:String.fromCharCode(0x30A0+Math.random()*60|0);
-   c.fillStyle=near?'#fff':`hsl(${130+i%20},80%,${40+Math.random()*25}%)`;c.fillText(ch,x,Y[i]);Y[i]+=near?9:R(4,9);if(Y[i]>H+20)Y[i]=R(-200,0)}}}});
+T1('Circle Text','Text','PTS ANIMATIONS');
+sc4('Circle Text','Badge / seal / footer mark','Rings of text counter-rotate, pointer speeds them','#0b0b10',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=(TX.word||' ').trim()||' ',b=Math.min(W,H)/2,sp=1+m.x/W*2;paint(c,'11,11,16',W,H);ctr(c);
+  [.86,.62,.38].forEach((k,ri)=>{const r=b*k,fs=b*.11,cw=fs*.64,n=Math.floor(TAU*r/cw),str=(w+'   ').repeat(Math.ceil(n/(w.length+3))+1).slice(0,n),dir=ri%2?1:-1;
+   c.font=fnt(700,fs);for(let j=0;j<n;j++){const a=j*TAU/n+t*4e-4*sp*dir;c.save();c.translate(W/2+Math.cos(a)*r,H/2+Math.sin(a)*r);c.rotate(a+Math.PI/2);c.fillStyle=pal(ri*60+200+j*2,80,68);c.fillText(str[j],0,0);c.restore()}})}}});
+
+T1('Chromatic Split','Text','GLITCH');
+sc4('Chromatic Split','Fashion / music hero','Colour channels pull apart as you move','#0a0a0c',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=TX.word||' ',s=fitS(c,w,x=>fnt(800,x),W*.84,H*.5),d=4+Math.hypot(m.x-W/2,m.y-H/2)*.05+PTR.sp*.4;
+  paint(c,'10,10,12',W,H);c.font=fnt(800,s);ctr(c);c.globalCompositeOperation='lighter';
+  [['#ff2a55',-1],['#2aff9d',0],['#2a6bff',1]].forEach(([col,k])=>{c.fillStyle=col;c.fillText(w,W/2+k*d,H/2+Math.sin(t/300+k)*d*.3)});c.globalCompositeOperation='source-over'}}});
+
+T1('Bouncy Logo','Text','PTS');
+sc4('Bouncy Logo','Playful screensaver / 404','Click to add another one','#0a0a10',(S,F)=>{const c=F.ctx;let B=[];
+ return{init(){B=[{x:60,y:60,vx:1.6,vy:1.2,h:20}]},frame(t){const W=S.size.x,H=S.size.y,w=TX.word||' ',m=A(t,W,H);wash(c,'10,10,16',.22,W,H);
+  const s=fitS(c,w,x=>fnt(800,x),W*.34,H*.25);c.font=fnt(800,s);ctr(c);const tw=c.measureText(w).width/2+4,th=s*.5;
+  if(PTR.click&&B.length<6)B.push({x:m.x,y:m.y,vx:R(-2,2)||1.4,vy:R(-2,2)||1.1,h:R(0,360)});
+  for(const b of B){b.x+=b.vx;b.y+=b.vy;if(b.x<tw||b.x>W-tw){b.vx*=-1;b.x=Math.max(tw,Math.min(W-tw,b.x));b.h+=47}if(b.y<th||b.y>H-th){b.vy*=-1;b.y=Math.max(th,Math.min(H-th,b.y));b.h+=47}
+   c.fillStyle=pal(b.h,85,62);c.fillText(w,b.x,b.y)}}}});
+
+T1('Ribbon Text','Text','FLOW');
+sc4('Ribbon Text','Section divider / heading','Twisting ribbons, pointer height sets the swell','#0b0b12',(S,F)=>{const c=F.ctx;
+ return{init(){},frame(t){const W=S.size.x,H=S.size.y,m=A(t,W,H),w=(TX.word||' ').replace(/\s+/g,' '),s=Math.max(14,Math.min(H*.17,W/9)),amp=H*.18*(.4+(1-m.y/H));paint(c,'11,11,18',W,H);c.font=fnt(800,s);ctr(c);
+  for(const off of[0,Math.PI]){let x=-10,i=0;while(x<W+s){const ch=w[i%w.length],ph=x*.012+t*.002+off,sy=Math.cos(ph*1.3+t*.001);
+   c.save();c.translate(x,H/2+Math.sin(ph)*amp);c.rotate(Math.cos(ph)*.5);c.scale(1,sy);c.fillStyle=pal(x/W*160+(off?20:200),80,sy>0?62:42);c.fillText(ch,0,0);c.restore();x+=s*.64;i++}}}}});
